@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
+	"math/big"
 
 	"github.com/gofrs/uuid"
 )
@@ -35,8 +37,28 @@ func logRequest(r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		logRequest(r)
-		fmt.Fprintf(w, "Hello! you've requested %s\n", r.URL.Path)
+		// logRequest(r)
+		// fmt.Fprintf(w, "Hello! you've requested %s\n", r.URL.Path)
+		start := time.Now()
+		query := r.URL.Query()
+		filters, present := query["id"]
+		if present && len(filters) > 0 {
+			// val := c.DefaultQuery("id", "0")
+			id, err := strconv.Atoi(filters[0])
+			if err == nil {
+				var p, _ = new(big.Int).SetString("178542003245811211274167228297361192303886321036074276889145691522634525820185614278499562592134188995169731066418203258297035264969457638591284906658912408319763156912951486020761069099132619194489006875108217247513715271974383296142805846405783845170862140174184507256128825312324419293575432423822703857091", 0)
+				r, _ := new(big.Int).SetString("187",0);
+				for i := 0; i < id; i++ {
+					p.Mul(p,p)
+					p.Mod(p, r)
+				}
+			}
+		}
+		elapsed := time.Since(start)
+		concatenated := fmt.Sprintf("total time  taken = %v ns\n", elapsed.Nanoseconds())
+
+		// c.String(http.StatusOK, concatenated)
+		fmt.Fprintf(w, concatenated)
 	})
 
 	http.HandleFunc("/cached", func(w http.ResponseWriter, r *http.Request) {
